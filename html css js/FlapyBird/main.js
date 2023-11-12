@@ -92,18 +92,72 @@ const fundo = {
 
     }
 }
+
+//menu
+const menu_inicio = {
+    img_x: 133,
+    img_y: 0,
+    img_largura: 175,
+    img_altura: 151,
+    cnv_x: (cnv.width-175)/2,
+    cnv_y: (cnv.height-151)/2,
+    cnv_largura: 175,
+    cnv_altura: 151,
+    desenha(){
+        ctx.drawImage(
+            img, 
+            menu_inicio.img_x,
+            menu_inicio.img_y,
+            menu_inicio.img_largura,
+            menu_inicio.img_altura, 
+            menu_inicio.cnv_x,
+            menu_inicio.cnv_y, 
+            menu_inicio.cnv_largura,
+            menu_inicio.cnv_altura);
+    },
+    update(){}
+}
+
+let tela_ativa = {};
+function set_tela(tela_atual){
+    tela_ativa=tela_atual;
+}
+const telas = {};
+telas.menu= {
+    desenha(){
+        telas.jogo.desenha();
+        menu_inicio.desenha();
+    },
+    update(){
+        menu_inicio.update();
+    },
+    click(){
+        set_tela(telas.jogo);
+    }
+};
+telas.jogo={
+    desenha(){
+        fundo.desenha();
+        chao.desenha();
+        flapy_bird.desenha();
+    },
+    update(){
+        flapy_bird.update();
+    }
+};
+
 function game(){
     //start
-
-    //desenhar na tela
-    fundo.desenha();
-    chao.desenha();
-    flapy_bird.desenha();
-    flapy_bird.update();
-    //console.log(flapy_bird.cnv_y);
-    
+    tela_ativa.desenha();
+    tela_ativa.update();
     //fim
     requestAnimationFrame(game);
 }
+window.addEventListener("click", function(){
+    if(tela_ativa.click){
+        tela_ativa.click();
+    };
+});
 
+set_tela(telas.menu);
 game();

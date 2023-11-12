@@ -25,10 +25,7 @@ const flapy_bird = {
     update(){
         flapy_bird.volocidade = flapy_bird.volocidade+flapy_bird.gravidade;
         flapy_bird.cnv_y+=flapy_bird.volocidade;
-        /*if(flapy_bird.cnv_y >= 500){
-            flapy_bird.cnv_y= 0;
-            flapy_bird.volocidade=0;
-        }*/
+        
     },
     desenha(){
         ctx.drawImage(img, 

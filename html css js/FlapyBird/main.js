@@ -1,11 +1,28 @@
 const cnv = document.getElementById("cv");
 const ctx = cnv.getContext("2d");
+let globais = {}
+let tela_ativa = {};
 
-console.log(`altura: ${cnv.width},\nlargura: ${cnv.height},` )
-//src da img
+//console.log(`altura: ${cnv.width},\nlargura: ${cnv.height},` )
+
 const img =new Image();
 img.src="sprites.png";
 
+
+function set_tela(tela_atual){
+    tela_ativa=tela_atual;
+    if(tela_atual.init){
+        tela_atual.init()
+    }
+}
+function coledir(obj1, obj2){
+    if(obj1.cnv_y+obj1.cnv_altura>=obj2.cnv_y){
+        //console.log("colediu")
+        return true;
+    }else{
+        return false;
+    }
+}
 function cria_flapy_bird(){
     const flapy_bird = {
         //imagem
@@ -25,8 +42,13 @@ function cria_flapy_bird(){
             flapy_bird.volocidade=-flapy_bird.pulo
         },
         update(){
-            flapy_bird.volocidade = flapy_bird.volocidade+flapy_bird.gravidade;
-            flapy_bird.cnv_y+=flapy_bird.volocidade;
+            if(coledir(flapy_bird,chao)){
+                set_tela(telas.menu)
+                return;
+            }else{
+                flapy_bird.volocidade = flapy_bird.volocidade+flapy_bird.gravidade;
+                flapy_bird.cnv_y+=flapy_bird.volocidade;
+            }
             
         },
         desenha(){
@@ -43,10 +65,8 @@ function cria_flapy_bird(){
     }
     return flapy_bird;
 }
-let globais = {}
-globais.flapy_bird=cria_flapy_bird()
 
-//chao 
+//chao
 const chao = {
     img_x: 0,
     img_y: 610,
@@ -125,6 +145,9 @@ const menu_inicio = {
 //telas do jogo 
 const telas = {};
 telas.menu= {
+    init(){
+        globais.flapy_bird=cria_flapy_bird()
+    },
     desenha(){
         telas.jogo.desenha();
         menu_inicio.desenha();
@@ -134,13 +157,14 @@ telas.menu= {
     },
     click(){
         set_tela(telas.jogo);
+        console.log("mudar tela")
     }
 };
 telas.jogo={
     desenha(){
         fundo.desenha();
-        chao.desenha();
         globais.flapy_bird.desenha();
+        chao.desenha();
     },
     update(){
         globais.flapy_bird.update();
@@ -150,12 +174,8 @@ telas.jogo={
     }
 };
 //tela atual  do jogo 
-let tela_ativa = {};
-function set_tela(tela_atual){
-    tela_ativa=tela_atual;
-}
-set_tela(telas.menu)
 
+set_tela(telas.menu)
 function window_browser(){
     //start
     tela_ativa.desenha();
@@ -164,7 +184,6 @@ function window_browser(){
     requestAnimationFrame(window_browser);
 }
 window_browser()
-//definir tela
 
 
 //detectar click
